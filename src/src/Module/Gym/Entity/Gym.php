@@ -60,10 +60,6 @@ class Gym
         $this->updatedAt = new \DateTimeImmutable();
     }
 
-    // ======================
-    // Getters & Setters
-    // ======================
-
     public function getId(): ?int
     {
         return $this->id;

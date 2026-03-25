@@ -2,11 +2,11 @@
 
 namespace App\Module\Attendance\Entity;
 
-use App\Module\Attendance\Repository\AttendanceLogRepository;
 use App\Module\Gym\Entity\Gym;
-use App\Module\Member\Entity\Member;
 use App\Module\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
+use App\Module\Member\Entity\Member;
+use App\Module\Attendance\Repository\AttendanceLogRepository;
 
 #[ORM\Entity(repositoryClass: AttendanceLogRepository::class)]
 #[ORM\Table(name: 'attendance_logs')]

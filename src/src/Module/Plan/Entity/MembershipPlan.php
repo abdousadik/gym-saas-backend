@@ -37,7 +37,7 @@ class MembershipPlan
 
     #[ORM\Column(type: 'integer')]
     #[Assert\PositiveOrZero]
-    private int $price; // in cents
+    private int $price;
 
     #[ORM\Column(length: 20)]
     private string $status = self::STATUS_ACTIVE;
@@ -58,10 +58,6 @@ class MembershipPlan
     {
         $this->updatedAt = new \DateTimeImmutable();
     }
-
-    // ======================
-    // Getters & Setters
-    // ======================
 
     public function getId(): ?int
     {
