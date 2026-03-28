@@ -21,4 +21,16 @@ abstract class ApiController extends AbstractController
             $status
         );
     }
+
+    protected function error(
+        string $code,
+        string $message,
+        int $status = 400,
+        array $details = []
+    ): JsonResponse {
+        return $this->json(
+            ApiResponse::error($code, $message, $details),
+            $status
+        );
+    }
 }
