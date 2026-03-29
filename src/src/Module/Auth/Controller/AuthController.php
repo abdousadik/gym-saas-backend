@@ -43,4 +43,10 @@ class AuthController extends ApiController
             ] : null,
         ]);
     }
+
+    #[Route('/logout', methods: ['POST'])]
+    public function logout(): JsonResponse
+    {
+        return $this->success(null, 'Logged out');
+    }
 }
