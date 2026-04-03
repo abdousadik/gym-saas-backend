@@ -3,6 +3,7 @@
 namespace App\Module\Auth\Controller;
 
 use App\Module\Common\Controller\ApiController;
+use App\Module\Common\Tenant\TenantContext;
 use App\Module\User\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -12,9 +13,16 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 #[Route('/api/auth', name: 'api_auth_')]
 class AuthController extends ApiController
 {
+    public function __construct(
+        private readonly TenantContext $tenantContext,
+    ) {
+    }
+    
     #[Route('/me', name: 'me', methods: ['GET'])]
     public function me(#[CurrentUser] ?User $user): JsonResponse
     {
+        $gym = $this->tenantContext->getGym();
+        
         if (!$user instanceof User) {
             return $this->error(
                 'UNAUTHENTICATED',
