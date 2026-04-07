@@ -3,9 +3,7 @@
 namespace App\Module\Auth\Controller;
 
 use App\Module\Common\Controller\ApiController;
-use App\Module\Common\Tenant\TenantContext;
 use App\Module\User\Entity\User;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -13,16 +11,9 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 #[Route('/api/auth', name: 'api_auth_')]
 class AuthController extends ApiController
 {
-    public function __construct(
-        private readonly TenantContext $tenantContext,
-    ) {
-    }
-    
     #[Route('/me', name: 'me', methods: ['GET'])]
     public function me(#[CurrentUser] ?User $user): JsonResponse
     {
-        $gym = $this->tenantContext->getGym();
-        
         if (!$user instanceof User) {
             return $this->error(
                 'UNAUTHENTICATED',
@@ -31,14 +22,31 @@ class AuthController extends ApiController
             );
         }
 
+        return $this->success($this->serializeUser($user));
+    }
+
+    #[Route('/logout', methods: ['POST'])]
+    public function logout(): JsonResponse
+    {
+        return $this->success(null, 'Logged out');
+    }
+
+    private function serializeUser(User $user): array
+    {
         $gym = $user->getGym();
 
-        return $this->success([
+        return [
             'id' => $user->getId(),
+            'firstName' => $user->getFirstName(),
+            'lastName' => $user->getLastName(),
             'fullName' => $user->getFullName(),
             'email' => $user->getEmail(),
             'platformRole' => $user->getPlatformRole(),
             'gymRole' => $user->getGymRole(),
+            'roles' => $user->getRoles(),
+            'status' => $user->getStatus(),
+            'createdAt' => $user->getCreatedAt()->format(\DateTimeInterface::ATOM),
+            'updatedAt' => $user->getUpdatedAt()?->format(\DateTimeInterface::ATOM),
             'gym' => $gym ? [
                 'id' => $gym->getId(),
                 'name' => $gym->getName(),
@@ -49,12 +57,6 @@ class AuthController extends ApiController
                 'city' => $gym->getCity(),
                 'status' => $gym->getStatus(),
             ] : null,
-        ]);
-    }
-
-    #[Route('/logout', methods: ['POST'])]
-    public function logout(): JsonResponse
-    {
-        return $this->success(null, 'Logged out');
+        ];
     }
 }
